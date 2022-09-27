@@ -12,7 +12,7 @@ import "./ISounds.sol";
 
 
 
-contract KeyBoard is ERC721Enumerable,ERC2981, Ownable {
+contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
     uint public maxSupply = 10_000;
@@ -25,7 +25,7 @@ contract KeyBoard is ERC721Enumerable,ERC2981, Ownable {
 
     uint public price;
 
-    string private ePianoHash;
+    string public ePianoHash;
 
     string[] internal colorNames = ["Red", "Blue","Purple", "Green", "Pink"];
     mapping(uint => keyBoardLib.ColorScheme) private colorSchemes;
@@ -65,7 +65,7 @@ contract KeyBoard is ERC721Enumerable,ERC2981, Ownable {
         setFrontend("frontend goes here");
         setEPianoHash("tN6qM5U8UE9n_gSMQ0LJYJ4sgrVYe6OEKDcvgVYvXU4");
         setPrice(.1 ether);
-        _setDefaultRoyalty(address(this), royaltyPercentage);
+        _setDefaultRoyalty(owner(), royaltyPercentage);
 
 
         // setting up the colors mapping 
@@ -128,7 +128,7 @@ contract KeyBoard is ERC721Enumerable,ERC2981, Ownable {
         frontEnd = url;
     }
 
-    function withdrawFunds() public onlyOwner {
+    function withdrawFunds() public {
         uint amount = address(this).balance;
         Address.sendValue(payable(owner()), amount);
     }
@@ -152,14 +152,14 @@ contract KeyBoard is ERC721Enumerable,ERC2981, Ownable {
         uint total = length * price;
 
         // safety checks
-        if (msg.value == total) revert IncorrectMsgValue();
-        if (length <= 5) revert TooManyMints();
-        if(_tokenIdCounter.current() + length <= maxSupply) revert MaxSupplyExceeded();
+        if (msg.value != total) revert IncorrectMsgValue();
+        if (length > 5) revert TooManyMints();
+        // if(_tokenIdCounter.current() + length > maxSupply) revert MaxSupplyExceeded();
         
         
         for (uint i=0; i<length; i++) {
             // makes sure the color exists
-            if(_colorSchemes[i] <= 5) revert InvalidColor();
+            if(_colorSchemes[i] > 5) revert InvalidColor();
             // increment id, get a copy of it
             _tokenIdCounter.increment();
             uint id = _tokenIdCounter.current();

@@ -38,8 +38,14 @@ contract Sounds is ERC1155Supply, Ownable {
     mapping(uint => Sound) internal soundIdToSound;
 
     event TokenMint(address minter);
-    
 
+    error NonExistentSound();
+    error MaxAmountExceeded(uint soundId);
+    error IncorrectMsgValue();
+    error TooManyMints();
+
+    
+ 
     constructor() ERC1155("") {
         setFrontend("front end goes here.");
         // setDefaultPrice(.1 ether);
@@ -51,7 +57,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Grand Piano", 
             5,
             10000,
-            10**16
+            .01 ether
         );
         createSound(
             "NiGTqdulx6I2pp4PZLnCzAOUkQAXO50QIL8efl9nxRM", 
@@ -61,7 +67,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Juno", 
             4,
             10000,
-            10**16
+            .01 ether
         );
         
         createSound(
@@ -72,7 +78,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Rhodes", 
             4,
             10000,
-            10**16
+            .01 ether
         );
         
 
@@ -85,7 +91,7 @@ contract Sounds is ERC1155Supply, Ownable {
         soundIdToSound[soundId].arweaveHash = newHash;
     }
 
-    function withdrawFunds() public onlyOwner {
+    function withdrawFunds() public {
         uint amount = address(this).balance;
         Address.sendValue(payable(owner()), amount);
     }
@@ -93,9 +99,7 @@ contract Sounds is ERC1155Supply, Ownable {
     function setPrice(uint id, uint newPrice) public onlyOwner {
         soundIdToSound[id].price = newPrice;
     }
-    // function setDefaultPrice(uint newPrice) public onlyOwner {
-    //     defaultPrice = newPrice;
-    // }
+
     function setFrontend(string memory newUrl) public onlyOwner {
         frontEnd = newUrl;
     }
@@ -114,7 +118,8 @@ contract Sounds is ERC1155Supply, Ownable {
 
     function createSound(
         string memory _arweaveHash, 
-        bool _oneShot, bool _polyphonic, 
+        bool _oneShot, 
+        bool _polyphonic, 
         string memory _soundType, 
         string memory _name, 
         uint _octaves, 
@@ -175,26 +180,26 @@ contract Sounds is ERC1155Supply, Ownable {
     }
     
     function mint(uint256 soundId) payable public { 
-        require(soundId >= 1 && soundId <= totalSounds(), "sound doesnt exist");
-        require(msg.value == soundIdToSound[soundId].price);
-        require(totalSupply(soundId) < soundIdToSound[soundId].maxAmount, "max amount reached");
+        if(soundId < 1 || soundId > totalSounds()) revert NonExistentSound();
+        if(msg.value != soundIdToSound[soundId].price) revert IncorrectMsgValue();
+        if(totalSupply(soundId) >= soundIdToSound[soundId].maxAmount) revert MaxAmountExceeded(soundId);
         _mint(msg.sender, soundId, 1, "");
         emit TokenMint(msg.sender);
 
     }
 
-    function mintBatch(address to, uint[] memory soundIds, uint[] memory amounts) payable public{
+    function mintBatch(uint[] memory soundIds, uint[] memory amounts) payable public{
         uint totalCost = 0;
         for(uint i=0; i<soundIds.length; i++) {
             uint soundId = soundIds[i];
             uint amount = amounts[i];
-            require(soundId >= 1 && soundId <= totalSounds(), "sound doesnt exist");
-            require(totalSupply(soundId) + amount <= soundIdToSound[soundId].maxAmount, "max amount exceeded");
-            require(amount <= 5, "max amount is 5");
+            if(soundId < 1 && soundId > totalSounds()) revert NonExistentSound();
+            if(totalSupply(soundId) + amount > soundIdToSound[soundId].maxAmount) revert MaxAmountExceeded(soundId);
+            if(amount > 5) revert TooManyMints();
             totalCost += (amount * soundIdToSound[soundId].price);
         }
-        require(msg.value == totalCost, "incorrect amount sent");
-        _mintBatch(to, soundIds, amounts, "");
+        if(msg.value != totalCost) revert IncorrectMsgValue();
+        _mintBatch(msg.sender, soundIds, amounts, "");
         emit TokenMint(msg.sender);
 
     }
