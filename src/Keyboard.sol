@@ -39,7 +39,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     mapping(address => string) internal addressToGateway;
 
     modifier onlyTokenOwner(uint id) {
-        if (ownerOf(id) == msg.sender) revert OnlyTokenOwner();
+        if (ownerOf(id) != msg.sender) revert OnlyTokenOwner();
         _;
     }
 
@@ -229,7 +229,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         uint[] memory installed = tokenIdtoInstalledSounds[KeyboardId];
         // revert if "soundIndex" is already in the installed list
         if (isInstalled(installed,soundIndex)) revert AlreadyInstalled();
-        // addes soundsIndex to list
+        // adds soundsIndex to list
         tokenIdtoInstalledSounds[KeyboardId].push(soundIndex);
         // transers sound token from "msg.sender"(owner of "keyboardId") to this contract
         soundsContract.safeTransferFrom(msg.sender, address(this), soundIndex, 1, "");
@@ -268,10 +268,9 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         // otherwise uses the custom gateway 
         return keccak256(gatewayBytes) == keccak256(bytes("default")) || gatewayBytes.length == 0
         ? defaultGateway
-        : addressToGateway[user];
-        
-        
+        : addressToGateway[user];        
     }
+    
     // returns array of all sound names
     function getSoundNames() public view returns(string[] memory) {
         uint total = totalSounds();
@@ -284,6 +283,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         }
         return soundNames;
     }
+
     // returns array of balances of each sound owned by "user"
     // in this case, balances[0] corresponds to sound id #1
     function getUserSoundBalances(address user) public view returns(uint[] memory) {

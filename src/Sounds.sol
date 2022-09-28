@@ -193,7 +193,7 @@ contract Sounds is ERC1155Supply, Ownable {
         for(uint i=0; i<soundIds.length; i++) {
             uint soundId = soundIds[i];
             uint amount = amounts[i];
-            if(soundId < 1 && soundId > totalSounds()) revert NonExistentSound();
+            if(soundId < 1 || soundId > totalSounds()) revert NonExistentSound();
             if(totalSupply(soundId) + amount > soundIdToSound[soundId].maxAmount) revert MaxAmountExceeded(soundId);
             if(amount > 5) revert TooManyMints();
             totalCost += (amount * soundIdToSound[soundId].price);
