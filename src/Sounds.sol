@@ -86,7 +86,7 @@ contract Sounds is ERC1155Supply, Ownable {
         symbol = "SNDS";
         }
 
-
+    
     function updateUri(string memory newHash, uint soundId) public onlyOwner {
         soundIdToSound[soundId].arweaveHash = newHash;
     }
@@ -107,13 +107,6 @@ contract Sounds is ERC1155Supply, Ownable {
 
     function totalSounds() public view returns(uint) {
         return currentSoundId;
-    }
-    
-
-    function getSoundData(uint soundId) public view returns(Sound memory sound){
-        sound = soundIdToSound[soundId];
-
-
     }
 
     function createSound(
@@ -142,8 +135,11 @@ contract Sounds is ERC1155Supply, Ownable {
     }
 
 
+    function getSoundData(uint soundId) public view returns(Sound memory sound){
+        sound = soundIdToSound[soundId];
 
 
+    }
     
 
     function uri(uint soundId) public view override returns(string memory) {

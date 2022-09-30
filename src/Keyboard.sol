@@ -108,7 +108,8 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
     }
 
-    ///////////////////////////////////////////////////////// OWNER FUNCTIONS
+    //////////////////////////OWNER FUNCTIONS///////////////////////////////
+
 
     function setSounds(address soundsAddr) public onlyOwner {
         //can only set the sounds contract once
@@ -270,7 +271,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         ? defaultGateway
         : addressToGateway[user];        
     }
-    
+
     // returns array of all sound names
     function getSoundNames() public view returns(string[] memory) {
         uint total = totalSounds();
@@ -297,6 +298,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         return balances;
 
     }
+    
     
     // returns a list of sound ids that are install in `id`, if the sound id is not install, it is a `0`
     function getInstalledSounds(uint id) public view returns(uint[] memory) {
