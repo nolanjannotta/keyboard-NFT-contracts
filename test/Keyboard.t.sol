@@ -31,7 +31,6 @@ contract ERC721Test is Test {
         sounds = new Sounds();
     }
 
-
     function onERC721Received(
         address _operator,
         address _from,
@@ -75,7 +74,7 @@ contract ERC721Test is Test {
         data;
         return this.onERC1155BatchReceived.selector;
     }
-
+    // so we can test withdrawFunds function
     receive() payable external {}
 
     function invariantMetadata() public {
@@ -253,6 +252,28 @@ contract ERC721Test is Test {
         
     }
  
+
+    function testTokenIdsByOwner() public {
+        uint[] memory colors = getColors();
+        keyboard.mint{value:.5 ether}(colors);
+
+        uint[] memory owned = keyboard.tokenIdsByOwner(address(this));
+        assertEq(owned[0], 1);
+        assertEq(owned[1], 2);
+        assertEq(owned[2], 3);
+        assertEq(owned[3], 4);
+        assertEq(owned[4], 5);
+
+
+        keyboard.safeTransferFrom(address(this), address(0xBEEF), 3);
+        assertEq(keyboard.tokenIdsByOwner(address(0xBEEF))[0], 3);
+
+        owned = keyboard.tokenIdsByOwner(address(this));
+        assertEq(owned[0], 1);
+        assertEq(owned[1], 2);
+        assertEq(owned[2], 5);
+        assertEq(owned[3], 4);
+    }
 
 
 
