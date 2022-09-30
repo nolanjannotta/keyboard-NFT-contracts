@@ -204,5 +204,34 @@ contract ERC721Test is Test, TestSetUp {
 
     }
 
+    function testWithdraw() public {
+        uint[] memory ids = new uint[](3);
+        ids[0] = 1; ids[1] = 2; ids[2] = 3;
+
+
+        uint[] memory amounts = new uint[](3);
+        amounts[0] = 2; amounts[1] = 2; amounts[2] = 2;
+
+        uint total;
+        for(uint i=0; i<ids.length; i++) {
+            total += (sounds.getSoundData(ids[i]).price * amounts[i]);
+        }   
+
+        sounds.mintBatch {value: total}(ids, amounts);
+
+        assertEq(address(sounds).balance, .06 ether);
+
+        // set this address balance to zero
+        hoax(address(this), 0 ether);
+        sounds.withdrawFunds();
+
+        // check is ether is transferred correctly
+        assertEq(address(keyboard).balance, 0);
+        assertEq(address(this).balance, .06 ether);
+
+
+
+    }
+
 
 }
