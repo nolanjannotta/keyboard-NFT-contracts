@@ -16,7 +16,7 @@ contract ERC721Test is Test, TestSetUp {
     function invariantMetadata() public {
         assertEq(keyboard.name(), "Keyboards");
         assertEq(keyboard.symbol(), "KEYS");
-        assertEq(keyboard.price(), .1 ether);
+        assertEq(keyboard.price(), .01 ether);
         assertEq(keyboard.maxSupply(), 10_000);
         assertEq(keyboard.defaultGateway(), "https://arweave.net/");
 
@@ -39,7 +39,17 @@ contract ERC721Test is Test, TestSetUp {
     }
 
     function testSetUserGateway() public {
+
         string memory gateway = "new gateway";
+        // should fail if no tokens are owned by msg.sender
+        vm.expectRevert(NotTokenOwner.selector);
+        keyboard.setGateway(gateway);
+        // minting
+        uint[] memory colors = getColors();
+        uint price = keyboard.price() * colors.length;
+
+        keyboard.mint{value: price}(colors);
+        // setting gateway
         keyboard.setGateway(gateway);
         assertEq(keyboard.getGateway(address(this)), gateway);
 
@@ -191,7 +201,8 @@ contract ERC721Test is Test, TestSetUp {
 
     function testTokenIdsByOwner() public {
         uint[] memory colors = getColors();
-        keyboard.mint{value:.5 ether}(colors);
+        uint price = keyboard.price() * colors.length;
+        keyboard.mint{value:price}(colors);
 
         uint[] memory owned = keyboard.tokenIdsByOwner(address(this));
         assertEq(owned[0], 1);
@@ -217,20 +228,21 @@ contract ERC721Test is Test, TestSetUp {
     ////////////////keyboard mint tests///////////////////////////
 
     function testMint() public {
-
         uint[] memory colors = getColors();
-        keyboard.mint{value:.5 ether}(colors);
+        uint price = keyboard.price() * colors.length;
 
-        assertEq(address(keyboard).balance, .5 ether);
+        keyboard.mint{value:price}(colors);
+
+        assertEq(address(keyboard).balance, price);
         assertEq(keyboard.balanceOf(address(this)), 5);
         assertEq(keyboard.ownerOf(1), address(this));
 
         // wrong price mint
         vm.expectRevert(IncorrectMsgValue.selector);
-        keyboard.mint{value:.2 ether}(colors);
+        keyboard.mint{value:.02 ether}(colors);
 
         vm.expectRevert(IncorrectMsgValue.selector);
-        keyboard.mint{value:.6 ether}(colors);
+        keyboard.mint{value:.06 ether}(colors);
 
 
         // testing too many colors
@@ -242,16 +254,14 @@ contract ERC721Test is Test, TestSetUp {
         tooManyColors[4] = 5;
         tooManyColors[5] = 5;
 
-        uint price = keyboard.price() * tooManyColors.length;
-
         vm.expectRevert(TooManyMints.selector);
-        keyboard.mint{value:price}(tooManyColors);
+        keyboard.mint{value:.06 ether}(tooManyColors);
 
 
         // testing invalid color mint
         colors[4] = 6;
         vm.expectRevert(InvalidColor.selector);
-        keyboard.mint{value:.5 ether}(colors);
+        keyboard.mint{value:price}(colors);
 
     }
 
@@ -262,8 +272,9 @@ contract ERC721Test is Test, TestSetUp {
 
     function testWithdraw() public {
         uint[] memory colors = getColors();
-        keyboard.mint{value:.5 ether}(colors);
-        assertEq(address(keyboard).balance, .5 ether);
+        uint price = keyboard.price() * colors.length;
+        keyboard.mint{value:price}(colors);
+        assertEq(address(keyboard).balance, price);
 
         // set this address balance to zero
         hoax(address(this), 0 ether);
@@ -271,7 +282,7 @@ contract ERC721Test is Test, TestSetUp {
 
         // check is ether is transferred correctly
         assertEq(address(keyboard).balance, 0);
-        assertEq(address(this).balance, .5 ether);
+        assertEq(address(this).balance, price);
 
 
 

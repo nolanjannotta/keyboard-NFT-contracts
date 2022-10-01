@@ -115,7 +115,7 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(sounds.getSoundData(1).oneShot, false);
         assertEq(sounds.getSoundData(1).polyphonic, true);
         assertEq(sounds.getSoundData(1).octaves, 5);
-        assertEq(sounds.getSoundData(1).price, .01 ether);
+        assertEq(sounds.getSoundData(1).price, .1 ether);
         assertEq(sounds.getSoundData(1).maxAmount, 10000);
 
         // check newly created sound 
@@ -219,7 +219,7 @@ contract ERC721Test is Test, TestSetUp {
 
         sounds.mintBatch {value: total}(ids, amounts);
 
-        assertEq(address(sounds).balance, .06 ether);
+        assertEq(address(sounds).balance, total);
 
         // set this address balance to zero
         hoax(address(this), 0 ether);
@@ -227,7 +227,7 @@ contract ERC721Test is Test, TestSetUp {
 
         // check is ether is transferred correctly
         assertEq(address(keyboard).balance, 0);
-        assertEq(address(this).balance, .06 ether);
+        assertEq(address(this).balance, total);
 
 
 

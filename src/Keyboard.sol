@@ -64,7 +64,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     constructor() ERC721("Keyboards", "KEYS") { 
         setFrontend("frontend goes here");
         setEPianoHash("tN6qM5U8UE9n_gSMQ0LJYJ4sgrVYe6OEKDcvgVYvXU4");
-        setPrice(.1 ether);
+        setPrice(.01 ether);
         _setDefaultRoyalty(owner(), royaltyPercentage);
 
 
@@ -108,7 +108,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
     }
 
-    //////////////////////////OWNER FUNCTIONS///////////////////////////////
+    ///////////////////////////////OWNER FUNCTIONS///////////////////////////////
 
 
     function setSounds(address soundsAddr) public onlyOwner {
@@ -155,7 +155,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         // safety checks
         if (msg.value != total) revert IncorrectMsgValue();
         if (length > 5) revert TooManyMints();
-        // if(_tokenIdCounter.current() + length > maxSupply) revert MaxSupplyExceeded();
+        if(_tokenIdCounter.current() + length > maxSupply) revert MaxSupplyExceeded();
         
         
         for (uint i=0; i<length; i++) {
@@ -255,7 +255,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
     function setGateway(string memory newString) public {
         // reverts if msg.sender does not own a keyboard
-        if(balanceOf(msg.sender) > 0) revert NotTokenOwner();
+        if(balanceOf(msg.sender) == 0) revert NotTokenOwner();
         // sets custom arweave gateway for all tokens owned by msg.sender
         addressToGateway[msg.sender] = newString;
         emit GatewayUpdated(newString);

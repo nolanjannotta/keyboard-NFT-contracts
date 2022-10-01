@@ -57,7 +57,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Grand Piano", 
             5,
             10000,
-            .01 ether
+            .1 ether
         );
         createSound(
             "NiGTqdulx6I2pp4PZLnCzAOUkQAXO50QIL8efl9nxRM", 
@@ -67,7 +67,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Juno", 
             4,
             10000,
-            .01 ether
+            .1 ether
         );
         
         createSound(
@@ -78,13 +78,13 @@ contract Sounds is ERC1155Supply, Ownable {
             "Rhodes", 
             4,
             10000,
-            .01 ether
+            .1 ether
         );
         
 
         name = "Sounds";
         symbol = "SNDS";
-        }
+    }
 
     
     function updateUri(string memory newHash, uint soundId) public onlyOwner {
