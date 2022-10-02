@@ -50,7 +50,7 @@ contract Sounds is ERC1155Supply, Ownable {
         setFrontend("front end goes here.");
         // setDefaultPrice(.1 ether);
         createSound(
-            "2sDFrNK4ftL4hoqH00XX4y3n-kg_9v3UViBQit9fAs8", 
+            "pvB8EG3mjVWf0cdarTtJOv37s-24L_9oREPCatbCEzU", 
             false,
             true,
             "Piano/Epiano", 
