@@ -204,12 +204,24 @@ contract ERC721Test is Test, TestSetUp {
         uint price = keyboard.price() * colors.length;
         keyboard.mint{value:price}(colors);
 
+
+        hoax(address(0xABCBEEF), 1 ether);
+        keyboard.mint{value:price}(colors);
+
+
         uint[] memory owned = keyboard.tokenIdsByOwner(address(this));
         assertEq(owned[0], 1);
         assertEq(owned[1], 2);
         assertEq(owned[2], 3);
         assertEq(owned[3], 4);
         assertEq(owned[4], 5);
+
+        owned = keyboard.tokenIdsByOwner(address(0xABCBEEF));
+        assertEq(owned[0], 6);
+        assertEq(owned[1], 7);
+        assertEq(owned[2], 8);
+        assertEq(owned[3], 9);
+        assertEq(owned[4], 10);
 
 
         keyboard.safeTransferFrom(address(this), address(0xBEEF), 3);

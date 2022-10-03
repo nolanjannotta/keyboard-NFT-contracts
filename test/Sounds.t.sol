@@ -106,10 +106,10 @@ contract ERC721Test is Test, TestSetUp {
             10000,
             .001 ether
         );
-        
+         
 
         // check sound that is created on deployment
-        assertEq(sounds.getSoundData(1).arweaveHash, "2sDFrNK4ftL4hoqH00XX4y3n-kg_9v3UViBQit9fAs8");
+        assertEq(sounds.getSoundData(1).arweaveHash, "pvB8EG3mjVWf0cdarTtJOv37s-24L_9oREPCatbCEzU");
         assertEq(sounds.getSoundData(1).name, "Grand Piano");
         assertEq(sounds.getSoundData(1).soundType, "Piano/Epiano");
         assertEq(sounds.getSoundData(1).oneShot, false);

@@ -70,40 +70,25 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
         // setting up the colors mapping 
         colorSchemes[1] = keyBoardLib.ColorScheme(
-            "fefae0", 
-            "261b15",
             "00afb9",
-            "0081a7",
             "f07167"
         );
         
         colorSchemes[2] = keyBoardLib.ColorScheme(
-            "fefae0", 
-            "050505",
             "83c5be",
-            "0081a7",
             "0081a7"
         );
         colorSchemes[3] = keyBoardLib.ColorScheme(
-            "fefae0", 
-            "050505",
             "a7ece6",
-            "34BAAD",
             "AC4EBF"
         );
         colorSchemes[4] = keyBoardLib.ColorScheme(
-            "fefae0", 
-            "050505",
             "51C2DD",
-            "3B3B3B",
-            "39CC64"
+            "2a994a"
         );
         colorSchemes[5] = keyBoardLib.ColorScheme(
-            "fefae0", 
-            "050505",
             "b892ff",
-            "6e44ff",
-            "ff90b3"
+            "ff5d8f"
         );
 
     }
