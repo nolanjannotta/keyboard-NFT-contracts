@@ -2,23 +2,29 @@
 pragma solidity 0.8.7;
 
 import "forge-std/Script.sol";
-import "../src/Keyboard.sol";
+import "../src/KeyboardA.sol";
+import "../src/KeyboardOZ.sol";
 import "../src/Sounds.sol";
 import "forge-std/console.sol";
 
 
 contract MyScript is Script {
     function run() external {
-        vm.startBroadcast(0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80);
+        vm.startBroadcast();
 
-        Keyboard keyboard = new Keyboard();
+        // KeyboardA keyboardA = KeyboardA();
+        KeyboardOZ keyboardOZ = new KeyboardOZ();
+
         Sounds sounds = new Sounds();
-        keyboard.setSounds(address(sounds));
+        keyboardOZ.setSounds(address(sounds));
         uint[] memory colors = new uint[](5);
         colors[0] = 1; colors[1] = 2; colors[2] = 3; colors[3] = 4; colors[4] = 5;
-        keyboard.mint{value: keyboard.price() * 5}(colors);
-        string memory tokenUri = keyboard.tokenURI(5);
+        keyboardOZ.mint{value: keyboardOZ.price() * 5}(colors);
+        string memory tokenUri = keyboardOZ.tokenURI(5);
         console.log(tokenUri);
+        keyboardOZ.withdrawFunds();
+        console.log(address(sounds));
+        console.log(address(keyboardOZ));
 
         vm.stopBroadcast();
     }

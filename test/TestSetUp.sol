@@ -1,11 +1,14 @@
 pragma solidity 0.8.7;
 
 
-import "../src/Keyboard.sol";
+import "../src/KeyboardA.sol";
 import "../src/Sounds.sol";
+import "../src/KeyboardOZ.sol";
+
 
 abstract contract TestSetUp {
-    Keyboard keyboard;
+    KeyboardA keyboardA;
+    KeyboardOZ keyboardOZ;
     Sounds sounds;
     error NotInstalled();
     error AlreadyInstalled();
@@ -21,8 +24,9 @@ abstract contract TestSetUp {
     error MaxAmountExceeded();
 
     function setUp() public {
-        keyboard = new Keyboard();
+        keyboardA = new KeyboardA();
         sounds = new Sounds();
+        keyboardOZ = new KeyboardOZ();
     }
 
     function onERC721Received(

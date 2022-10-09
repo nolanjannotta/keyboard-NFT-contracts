@@ -56,7 +56,7 @@ contract ERC721Test is Test, TestSetUp {
     }
 
     function testOwnerCreateSound() public {
-        keyboard.setSounds(address(sounds));
+        keyboardA.setSounds(address(sounds));
         sounds.createSound(
             "arweave hash",
             true,
@@ -71,7 +71,7 @@ contract ERC721Test is Test, TestSetUp {
 
 
         // test for getSoundNames()
-        string[] memory installedNames = keyboard.getSoundNames();
+        string[] memory installedNames = keyboardA.getSoundNames();
         assertEq(installedNames[0], "Grand Piano");
         assertEq(installedNames[1], "Juno");
         assertEq(installedNames[2], "Rhodes");
@@ -115,7 +115,7 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(sounds.getSoundData(1).oneShot, false);
         assertEq(sounds.getSoundData(1).polyphonic, true);
         assertEq(sounds.getSoundData(1).octaves, 5);
-        assertEq(sounds.getSoundData(1).price, .1 ether);
+        assertEq(sounds.getSoundData(1).price, .01 ether);
         assertEq(sounds.getSoundData(1).maxAmount, 10000);
 
         // check newly created sound 
@@ -226,7 +226,7 @@ contract ERC721Test is Test, TestSetUp {
         sounds.withdrawFunds();
 
         // check is ether is transferred correctly
-        assertEq(address(keyboard).balance, 0);
+        assertEq(address(keyboardA).balance, 0);
         assertEq(address(this).balance, total);
 
 

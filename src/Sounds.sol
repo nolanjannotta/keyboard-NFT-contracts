@@ -57,7 +57,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Grand Piano", 
             5,
             10000,
-            .1 ether
+            .01 ether
         );
         createSound(
             "NiGTqdulx6I2pp4PZLnCzAOUkQAXO50QIL8efl9nxRM", 
@@ -67,7 +67,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Juno", 
             4,
             10000,
-            .1 ether
+            .01 ether
         );
         
         createSound(
@@ -78,7 +78,7 @@ contract Sounds is ERC1155Supply, Ownable {
             "Rhodes", 
             4,
             10000,
-            .1 ether
+            .01 ether
         );
         
 

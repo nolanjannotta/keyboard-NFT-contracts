@@ -6,13 +6,26 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
 
-import "./keyBoardLib.sol";
+import "./KeyboardLib.sol";
 import "./ISounds.sol";
 
+/////////////////////////////////////////////////////////
+//  _   __           _                         _       //   
+// | | / /          | |                       | |      //
+// | |/ /  ___ _   _| |__   ___   __ _ _ __ __| |___   //
+// |    \ / _ \ | | | '_ \ / _ \ / _` | '__/ _` / __|  //
+// | |\  \  __/ |_| | |_) | (_) | (_| | | | (_| \__ \  //
+// \_| \_/\___|\__, |_.__/ \___/ \__,_|_|  \__,_|___/  //
+//              __/ |                                  //
+//             |___/                                   //
+/////////////////////////////////////////////////////////
+                                                     
+                                                     
+                                                     
+/////perhaps the worlds first musical instrument NFT/////
 
 
-
-contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
+contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
     uint public maxSupply = 10_000;
@@ -28,7 +41,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     string public ePianoHash;
 
     string[] internal colorNames = ["Red", "Blue","Purple", "Green", "Pink"];
-    mapping(uint => keyBoardLib.ColorScheme) private colorSchemes;
+    mapping(uint => KeyboardLib.ColorScheme) private colorSchemes;
     mapping(uint => uint) internal idToColorScheme;
 
     string public frontEnd;
@@ -64,29 +77,29 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     constructor() ERC721("Keyboards", "KEYS") { 
         setFrontend("frontend goes here");
         setEPianoHash("tN6qM5U8UE9n_gSMQ0LJYJ4sgrVYe6OEKDcvgVYvXU4");
-        setPrice(.01 ether);
+        setPrice(.05 ether);
         _setDefaultRoyalty(owner(), royaltyPercentage);
 
 
         // setting up the colors mapping 
-        colorSchemes[1] = keyBoardLib.ColorScheme(
+        colorSchemes[1] = KeyboardLib.ColorScheme(
             "00afb9",
-            "f07167"
+            "ef233c"
         );
         
-        colorSchemes[2] = keyBoardLib.ColorScheme(
+        colorSchemes[2] = KeyboardLib.ColorScheme(
             "83c5be",
             "0081a7"
         );
-        colorSchemes[3] = keyBoardLib.ColorScheme(
+        colorSchemes[3] = KeyboardLib.ColorScheme(
             "a7ece6",
             "AC4EBF"
         );
-        colorSchemes[4] = keyBoardLib.ColorScheme(
+        colorSchemes[4] = KeyboardLib.ColorScheme(
             "51C2DD",
             "2a994a"
         );
-        colorSchemes[5] = keyBoardLib.ColorScheme(
+        colorSchemes[5] = KeyboardLib.ColorScheme(
             "b892ff",
             "ff5d8f"
         );
@@ -195,7 +208,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
         for (uint i=0; i<installed.length; i++) {
             if(installed[i]==element) return i;
         }
-        revert NotFound();
+        
     }
     // removes element at "index" of installed array in storage
     function _unInstall(uint keyboardId, uint index) private {
@@ -211,6 +224,8 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
 
     function install(uint KeyboardId, uint soundIndex) public onlyTokenOwner(KeyboardId) {
+        // make sure sound exists
+        if(soundIndex > totalSounds()) revert NotFound();
         // get copy of installed list
         uint[] memory installed = tokenIdtoInstalledSounds[KeyboardId];
         // revert if "soundIndex" is already in the installed list
@@ -334,10 +349,10 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
     function tokenURI(uint id) public view override returns(string memory) {
         address owner = ownerOf(id);
         uint color = idToColorScheme[id];
-        keyBoardLib.ColorScheme memory colors = colorSchemes[color];
+        KeyboardLib.ColorScheme memory colors = colorSchemes[color];
         (string memory soundArr, string memory attributes) = getSoundsAndAttributes(id,color);
         // create param onject to the pass to generateTokenUri()
-        keyBoardLib.URIParams memory params = keyBoardLib.URIParams(
+        KeyboardLib.URIParams memory params = KeyboardLib.URIParams(
             address(soundsContract),
             soundArr,
             attributes,
@@ -347,7 +362,7 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
             colors,
             color
         );
-        return keyBoardLib.generateTokenURI(params);
+        return KeyboardLib.generateTokenURI(params);
     }
 
     function tokenIdsByOwner(address owner) public view returns(uint[] memory) {
@@ -382,4 +397,3 @@ contract Keyboard is ERC721Enumerable,ERC2981, Ownable {
 
 
 }
-

@@ -14,11 +14,11 @@ contract ERC721Test is Test, TestSetUp {
     
 
     function invariantMetadata() public {
-        assertEq(keyboard.name(), "Keyboards");
-        assertEq(keyboard.symbol(), "KEYS");
-        assertEq(keyboard.price(), .01 ether);
-        assertEq(keyboard.maxSupply(), 10_000);
-        assertEq(keyboard.defaultGateway(), "https://arweave.net/");
+        assertEq(keyboardA.name(), "Keyboards");
+        assertEq(keyboardA.symbol(), "KEYS");
+        assertEq(keyboardA.price(), .05 ether);
+        assertEq(keyboardA.maxSupply(), 10_000);
+        assertEq(keyboardA.defaultGateway(), "https://arweave.net/");
 
     }
 
@@ -35,7 +35,7 @@ contract ERC721Test is Test, TestSetUp {
 
 
     function testOwner() public {
-        assertEq(keyboard.owner(), address(this));
+        assertEq(keyboardA.owner(), address(this));
     }
 
     function testSetUserGateway() public {
@@ -43,18 +43,18 @@ contract ERC721Test is Test, TestSetUp {
         string memory gateway = "new gateway";
         // should fail if no tokens are owned by msg.sender
         vm.expectRevert(NotTokenOwner.selector);
-        keyboard.setGateway(gateway);
+        keyboardA.setGateway(gateway);
         // minting
         uint[] memory colors = getColors();
-        uint price = keyboard.price() * colors.length;
+        uint price = keyboardA.price() * colors.length;
 
-        keyboard.mint{value: price}(colors);
+        keyboardA.mint{value: price}(colors);
         // setting gateway
-        keyboard.setGateway(gateway);
-        assertEq(keyboard.getGateway(address(this)), gateway);
+        keyboardA.setGateway(gateway);
+        assertEq(keyboardA.getGateway(address(this)), gateway);
 
-        keyboard.setGateway("default");
-        assertEq(keyboard.getGateway(address(this)), keyboard.defaultGateway());
+        keyboardA.setGateway("default");
+        assertEq(keyboardA.getGateway(address(this)), keyboardA.defaultGateway());
     }
 
     function testGetUserSoundBalances() public {
@@ -71,8 +71,8 @@ contract ERC721Test is Test, TestSetUp {
             total += (sounds.getSoundData(ids[i]).price * amounts[i]);
         }        
         sounds.mintBatch {value: total}(ids, amounts);
-        keyboard.setSounds(address(sounds));
-        uint[] memory installed = keyboard.getUserSoundBalances(address(this));
+        keyboardA.setSounds(address(sounds));
+        uint[] memory installed = keyboardA.getUserSoundBalances(address(this));
 
         assertEq(installed[0], 2);
         assertEq(installed[1], 2);
@@ -81,7 +81,7 @@ contract ERC721Test is Test, TestSetUp {
 
     }
 
-    function testKeyboardInstallations() public {
+    function testkeyboardAInstallations() public {
         // setup
 
         // creating another sound
@@ -123,26 +123,26 @@ contract ERC721Test is Test, TestSetUp {
         mintArg[0] = 1;
         mintArg[1] = 2;
         
-        // minting two keyboards
-        keyboard.mint{value: keyboard.price() * 2}(mintArg);
-        assertEq(keyboard.ownerOf(1), address(this));
-        assertEq(keyboard.ownerOf(2), address(this));
-        assertEq(keyboard.balanceOf(address(this)), 2);
+        // minting two keyboardAs
+        keyboardA.mint{value: keyboardA.price() * 2}(mintArg);
+        assertEq(keyboardA.ownerOf(1), address(this));
+        // assertEq(keyboardA.ownerOf(2), address(this));
+        assertEq(keyboardA.balanceOf(address(this)), 2);
 
 
 
-        // set sounds address in keyboard contract
-        keyboard.setSounds(address(sounds));
+        // set sounds address in keyboardA contract
+        keyboardA.setSounds(address(sounds));
 
         // approve
-        sounds.setApprovalForAll(address(keyboard), true);
-        // console.log(sounds.isApprovedForAll(address(this), address(keyboard)));
+        sounds.setApprovalForAll(address(keyboardA), true);
+        // console.log(sounds.isApprovedForAll(address(this), address(keyboardA)));
 
         // installing
 
-        keyboard.install(1,1);
-        keyboard.install(1,2);
-        keyboard.install(1,3);
+        keyboardA.install(1,1);
+        keyboardA.install(1,2);
+        keyboardA.install(1,3);
 
 
         // make sure tokens are transferred
@@ -150,35 +150,35 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(sounds.balanceOf(address(this),2), 1);
         assertEq(sounds.balanceOf(address(this),3), 1);
 
-        assertEq(sounds.balanceOf(address(keyboard),1), 1);
-        assertEq(sounds.balanceOf(address(keyboard),2), 1);
-        assertEq(sounds.balanceOf(address(keyboard),3), 1);
+        assertEq(sounds.balanceOf(address(keyboardA),1), 1);
+        assertEq(sounds.balanceOf(address(keyboardA),2), 1);
+        assertEq(sounds.balanceOf(address(keyboardA),3), 1);
 
         uint[] memory installed = new uint[](3);
         installed[0] = 1;
         installed[1] = 2;
         installed[2] = 3;
-        assertEq(keyboard.getInstalledSounds(1), installed);
+        assertEq(keyboardA.getInstalledSounds(1), installed);
 
         // double install
         vm.expectRevert(AlreadyInstalled.selector);
-        keyboard.install(1,1);
+        keyboardA.install(1,1);
         vm.expectRevert(AlreadyInstalled.selector);
-        keyboard.install(1,2);
+        keyboardA.install(1,2);
 
         // insufficient sound token balance;
         vm.expectRevert("ERC1155: insufficient balance for transfer");
-        keyboard.install(1,4);
+        keyboardA.install(1,4);
 
-        // testing installing sound in non owned keyboard
+        // testing installing sound in non owned keyboardA
         vm.expectRevert(OnlyTokenOwner.selector);
         vm.prank(address(0xBEEF));
-        keyboard.install(2,1);
+        keyboardA.install(2,1);
 
 
 
         // testing uninstalling
-        keyboard.unInstall(1,2);
+        keyboardA.unInstall(1,2);
         uint[] memory unInstalled = new uint[](2);
         
         unInstalled[0] = 1;
@@ -186,13 +186,13 @@ contract ERC721Test is Test, TestSetUp {
 
 
         assertEq(sounds.balanceOf(address(this),2), 2);
-        assertEq(sounds.balanceOf(address(keyboard),2), 0);
+        assertEq(sounds.balanceOf(address(keyboardA),2), 0);
 
-        assertEq(keyboard.getInstalledSounds(1), unInstalled);
+        assertEq(keyboardA.getInstalledSounds(1), unInstalled);
 
         // testing double uninstall
         vm.expectRevert(NotInstalled.selector);
-        keyboard.unInstall(1,2);
+        keyboardA.unInstall(1,2);
 
 
         
@@ -201,22 +201,22 @@ contract ERC721Test is Test, TestSetUp {
 
     function testTokenIdsByOwner() public {
         uint[] memory colors = getColors();
-        uint price = keyboard.price() * colors.length;
-        keyboard.mint{value:price}(colors);
+        uint price = keyboardA.price() * colors.length;
+        keyboardA.mint{value:price}(colors);
 
 
         hoax(address(0xABCBEEF), 1 ether);
-        keyboard.mint{value:price}(colors);
+        keyboardA.mint{value:price}(colors);
 
 
-        uint[] memory owned = keyboard.tokenIdsByOwner(address(this));
+        uint[] memory owned = keyboardA.tokensOfOwner(address(this));
         assertEq(owned[0], 1);
         assertEq(owned[1], 2);
         assertEq(owned[2], 3);
         assertEq(owned[3], 4);
         assertEq(owned[4], 5);
 
-        owned = keyboard.tokenIdsByOwner(address(0xABCBEEF));
+        owned = keyboardA.tokensOfOwner(address(0xABCBEEF));
         assertEq(owned[0], 6);
         assertEq(owned[1], 7);
         assertEq(owned[2], 8);
@@ -224,37 +224,37 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(owned[4], 10);
 
 
-        keyboard.safeTransferFrom(address(this), address(0xBEEF), 3);
-        assertEq(keyboard.tokenIdsByOwner(address(0xBEEF))[0], 3);
+        keyboardA.safeTransferFrom(address(this), address(0xBEEF), 3);
+        assertEq(keyboardA.tokensOfOwner(address(0xBEEF))[0], 3);
 
-        owned = keyboard.tokenIdsByOwner(address(this));
+        owned = keyboardA.tokensOfOwner(address(this));
         assertEq(owned[0], 1);
         assertEq(owned[1], 2);
-        assertEq(owned[2], 5);
-        assertEq(owned[3], 4);
+        assertEq(owned[2], 4);
+        assertEq(owned[3], 5);
     }
 
 
 
 
-    ////////////////keyboard mint tests///////////////////////////
+    ////////////////keyboardA mint tests///////////////////////////
 
     function testMint() public {
         uint[] memory colors = getColors();
-        uint price = keyboard.price() * colors.length;
+        uint price = keyboardA.price() * colors.length;
 
-        keyboard.mint{value:price}(colors);
+        keyboardA.mint{value:price}(colors);
 
-        assertEq(address(keyboard).balance, price);
-        assertEq(keyboard.balanceOf(address(this)), 5);
-        assertEq(keyboard.ownerOf(1), address(this));
+        assertEq(address(keyboardA).balance, price);
+        assertEq(keyboardA.balanceOf(address(this)), 5);
+        assertEq(keyboardA.ownerOf(1), address(this));
 
         // wrong price mint
         vm.expectRevert(IncorrectMsgValue.selector);
-        keyboard.mint{value:.02 ether}(colors);
+        keyboardA.mint{value:.02 ether}(colors);
 
         vm.expectRevert(IncorrectMsgValue.selector);
-        keyboard.mint{value:.06 ether}(colors);
+        keyboardA.mint{value:.06 ether}(colors);
 
 
         // testing too many colors
@@ -267,40 +267,40 @@ contract ERC721Test is Test, TestSetUp {
         tooManyColors[5] = 5;
 
         vm.expectRevert(TooManyMints.selector);
-        keyboard.mint{value:.06 ether}(tooManyColors);
+        keyboardA.mint{value:.3 ether}(tooManyColors);
 
 
         // testing invalid color mint
         colors[4] = 6;
         vm.expectRevert(InvalidColor.selector);
-        keyboard.mint{value:price}(colors);
+        keyboardA.mint{value:price}(colors);
 
     }
 
     function testFailSendEther() public {
         // reverts if ether is sent to contract 
-        payable(address(keyboard)).transfer(1 ether);
+        payable(address(keyboardA)).transfer(1 ether);
     }
 
     function testWithdraw() public {
         uint[] memory colors = getColors();
-        uint price = keyboard.price() * colors.length;
-        keyboard.mint{value:price}(colors);
-        assertEq(address(keyboard).balance, price);
+        uint price = keyboardA.price() * colors.length;
+        keyboardA.mint{value:price}(colors);
+        assertEq(address(keyboardA).balance, price);
 
         // set this address balance to zero
         hoax(address(this), 0 ether);
-        keyboard.withdrawFunds();
+        keyboardA.withdrawFunds();
 
         // check is ether is transferred correctly
-        assertEq(address(keyboard).balance, 0);
+        assertEq(address(keyboardA).balance, 0);
         assertEq(address(this).balance, price);
 
 
 
     }
 
-    ////////////keyboard owner functions/////////////////
+    ////////////keyboardA owner functions/////////////////
 
     function testOwnerSetters() public {
         string memory testString = "this is a test string";
@@ -308,55 +308,55 @@ contract ERC721Test is Test, TestSetUp {
 
 
         // set default sound hash
-        keyboard.setEPianoHash(testString);
-        assertEq(keyboard.ePianoHash(),testString);
+        keyboardA.setEPianoHash(testString);
+        assertEq(keyboardA.ePianoHash(),testString);
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xABCDBEEF));
-        keyboard.setEPianoHash(testString);
+        keyboardA.setEPianoHash(testString);
 
 
 
         // set price
-        keyboard.setPrice(testPrice);
-        assertEq(keyboard.price(), testPrice);
+        keyboardA.setPrice(testPrice);
+        assertEq(keyboardA.price(), testPrice);
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xABCDBEEF));
-        keyboard.setPrice(testPrice);
+        keyboardA.setPrice(testPrice);
 
 
 
         // set frontend
-        keyboard.setFrontend(testString);
-        assertEq(keyboard.frontEnd(), testString);
+        keyboardA.setFrontend(testString);
+        assertEq(keyboardA.frontEnd(), testString);
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xABCDBEEF));
-        keyboard.setFrontend(testString);
+        keyboardA.setFrontend(testString);
 
 
 
         // set default gateway
-        keyboard.setDefaultGateway(testString);
-        assertEq(keyboard.defaultGateway(), testString);
+        keyboardA.setDefaultGateway(testString);
+        assertEq(keyboardA.defaultGateway(), testString);
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xABCDBEEF));
-        keyboard.setDefaultGateway(testString);
+        keyboardA.setDefaultGateway(testString);
 
 
 
         // set sounds
-        keyboard.setSounds(address(sounds));
-        assertEq(keyboard.sounds(), address(sounds));
+        keyboardA.setSounds(address(sounds));
+        assertEq(keyboardA.sounds(), address(sounds));
         // test double set sounds
         vm.expectRevert(SoundsAlreadySet.selector);
-        keyboard.setSounds(address(0xBEEF));
+        keyboardA.setSounds(address(0xBEEF));
         // non owner
         vm.prank(address(0xABCDBEEF));
         vm.expectRevert('Ownable: caller is not the owner');        
-        keyboard.setSounds(address(sounds));
+        keyboardA.setSounds(address(sounds));
 
     }
 

@@ -1,0 +1,32 @@
+{
+  "transactions": [
+    {
+      "hash": "0x9442e24aa3cc6d9b5c67340e4cef1d3ccc31e8c0ac8c39ca789da0a20f8e3552",
+      "transactionType": "CALL",
+      "contractName": null,
+      "contractAddress": "0x380279A0b63c3def2Dab7c5A8E294FFF4867bC7b",
+      "function": null,
+      "arguments": null,
+      "transaction": {
+        "type": "0x02",
+        "from": "0xcf3c11427b9837d680a82a3162503384cde6b43c",
+        "to": "0x380279a0b63c3def2dab7c5a8e294fff4867bc7b",
+        "gas": "0xadd9",
+        "value": "0x0",
+        "data": "0xaa8b3e900000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000a68656c6c6f6f6f6f6f6f00000000000000000000000000000000000000000000",
+        "nonce": "0x11",
+        "accessList": []
+      },
+      "additionalContracts": []
+    }
+  ],
+  "receipts": [],
+  "libraries": [],
+  "pending": [
+    "0x9442e24aa3cc6d9b5c67340e4cef1d3ccc31e8c0ac8c39ca789da0a20f8e3552"
+  ],
+  "path": "C:/Users/13018/Documents/CODE/SOLIDITY/keyboards/broadcast\\Keyboard.s.sol\\421613\\run-latest.json",
+  "returns": {},
+  "timestamp": 1665269300,
+  "commit": "fcd08b7"
+}
