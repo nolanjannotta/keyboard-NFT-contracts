@@ -2,6 +2,7 @@
 pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/token/common/ERC2981.sol";
@@ -25,6 +26,9 @@ import "./ISounds.sol";
 /////perhaps the worlds first musical instrument NFT/////
 
 
+
+
+
 contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIdCounter;
@@ -35,6 +39,8 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
     uint96 internal royaltyPercentage = 300; // 3%
 
     string public defaultGateway = "https://arweave.net/";
+    string public scriptEnd;
+    bool public scriptUpdatable = true;
 
     uint public price;
 
@@ -44,7 +50,6 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
     mapping(uint => KeyboardLib.ColorScheme) private colorSchemes;
     mapping(uint => uint) internal idToColorScheme;
 
-    string public frontEnd;
     mapping(uint => uint[]) private tokenIdtoInstalledSounds;
 
     
@@ -53,6 +58,11 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
 
     modifier onlyTokenOwner(uint id) {
         if (ownerOf(id) != msg.sender) revert OnlyTokenOwner();
+        _;
+    }
+
+    modifier soundTokenExists(uint soundIndex) {
+        if(!soundsContract.exists(soundIndex)) revert NonExistentSound();
         _;
     }
 
@@ -67,15 +77,15 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
     error SoundsAlreadySet();
     error IncorrectMsgValue();
     error TooManyMints();
-    error NotFound();
+    error NonExistentSound();
     error MaxSupplyExceeded();
     error InvalidColor();
     error NotTokenOwner();
+    error ScriptLocked();
 
 
 
     constructor() ERC721("Keyboards", "KEYS") { 
-        setFrontend("frontend goes here");
         setEPianoHash("tN6qM5U8UE9n_gSMQ0LJYJ4sgrVYe6OEKDcvgVYvXU4");
         setPrice(.05 ether);
         _setDefaultRoyalty(owner(), royaltyPercentage);
@@ -122,14 +132,24 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
         price = newPrice;
     }
 
-    function setFrontend(string memory url) public onlyOwner {
-        //  users can always get the most update frontend. users can also verify a url is not a scammer.
-        frontEnd = url;
-    }
-
     function withdrawFunds() public {
         uint amount = address(this).balance;
         Address.sendValue(payable(owner()), amount);
+    }
+
+    function withdrawERC20(address token) public {
+        require(IERC20(token).transfer(owner(), IERC20(token).balanceOf(address(this))));
+
+    }
+    // allows owner to update script incase of any problems, or to fix Mac OS event listener issue.
+    // more details in the FAQ on the website
+    function updateScript(string memory newScript) public onlyOwner {
+        if(!scriptUpdatable) revert ScriptLocked();
+        scriptEnd = string(abi.encodePacked(newScript,"]]></script></svg>"));
+    }
+
+    function lockScript() public onlyOwner {
+        scriptUpdatable = false;
     }
 
     function setDefaultGateway(string memory newGateway) public onlyOwner {
@@ -143,6 +163,10 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
         // address of sounds contract
         return address(soundsContract);
     }
+    // stored only in sounds contract so we only need to set it once for both contracts
+    function frontEnd() public view returns (string memory) {
+        return soundsContract.frontEnd();
+    }
 
     function mint(uint[] memory _colorSchemes) public payable {
         // length is also the number of mints
@@ -152,7 +176,7 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
 
         // safety checks
         if (msg.value != total) revert IncorrectMsgValue();
-        if (length > 5) revert TooManyMints();
+        if (length > 20) revert TooManyMints();
         if(_tokenIdCounter.current() + length > maxSupply) revert MaxSupplyExceeded();
         
         
@@ -208,6 +232,7 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
         for (uint i=0; i<installed.length; i++) {
             if(installed[i]==element) return i;
         }
+        revert();
         
     }
     // removes element at "index" of installed array in storage
@@ -223,9 +248,7 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
 
 
 
-    function install(uint KeyboardId, uint soundIndex) public onlyTokenOwner(KeyboardId) {
-        // make sure sound exists
-        if(soundIndex > totalSounds()) revert NotFound();
+    function install(uint KeyboardId, uint soundIndex) public onlyTokenOwner(KeyboardId) soundTokenExists(soundIndex) {
         // get copy of installed list
         uint[] memory installed = tokenIdtoInstalledSounds[KeyboardId];
         // revert if "soundIndex" is already in the installed list
@@ -237,7 +260,7 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
         emit Install(KeyboardId,soundIndex);
     }
 
-    function unInstall(uint KeyboardId, uint soundIndex) public onlyTokenOwner(KeyboardId) {
+    function unInstall(uint KeyboardId, uint soundIndex) public onlyTokenOwner(KeyboardId) soundTokenExists(soundIndex) {
         // get copy of installed list
         uint[] memory installed = tokenIdtoInstalledSounds[KeyboardId];
         // reverts if soundIndex is NOT in the installed list
@@ -356,11 +379,12 @@ contract KeyboardOZ is ERC721Enumerable,ERC2981, Ownable {
             address(soundsContract),
             soundArr,
             attributes,
-            frontEnd,
+            frontEnd(),
             owner,
             id,
             colors,
-            color
+            color,
+            scriptEnd
         );
         return KeyboardLib.generateTokenURI(params);
     }

@@ -4,10 +4,12 @@ pragma solidity 0.8.7;
 import "../src/KeyboardA.sol";
 import "../src/Sounds.sol";
 import "../src/KeyboardOZ.sol";
+import "./ERC20Mock.sol";
 
 
 abstract contract TestSetUp {
-    KeyboardA keyboardA;
+    // KeyboardA keyboardA;
+    ERC20Mock erc20Mock;
     KeyboardOZ keyboardOZ;
     Sounds sounds;
     error NotInstalled();
@@ -22,11 +24,13 @@ abstract contract TestSetUp {
     error NotTokenOwner();
     error NonExistentSound();
     error MaxAmountExceeded();
+    error ScriptLocked();
 
     function setUp() public {
-        keyboardA = new KeyboardA();
+        // keyboardA = new KeyboardA();
         sounds = new Sounds();
         keyboardOZ = new KeyboardOZ();
+        erc20Mock = new ERC20Mock();
     }
 
     function onERC721Received(

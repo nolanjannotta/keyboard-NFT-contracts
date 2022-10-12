@@ -21,6 +21,7 @@ contract ERC721Test is Test, TestSetUp {
 
     //////////////////////////Sounds//////////////////////////
 
+
     function testTotalSounds() public {
         uint total = sounds.totalSounds();
         assertEq(total, 3);
@@ -44,13 +45,13 @@ contract ERC721Test is Test, TestSetUp {
         vm.prank(address(0xBEEF));
         sounds.setPrice(1,.1 ether);
 
-        sounds.setFrontend("new frontend");
+        sounds.setFrontEnd("new frontend");
         assertEq(sounds.frontEnd(), "new frontend");
 
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xBEEF));
-        sounds.setFrontend("new frontend");
+        sounds.setFrontEnd("new frontend");
 
 
     }
@@ -155,6 +156,9 @@ contract ERC721Test is Test, TestSetUp {
         vm.expectRevert(NonExistentSound.selector);
         sounds.mint{value: .01 ether}(6);
 
+        vm.expectRevert(NonExistentSound.selector);
+        sounds.mint{value: .01 ether}(0);
+
         sounds.createSound(
             "arweave hash",
             true,
@@ -196,9 +200,14 @@ contract ERC721Test is Test, TestSetUp {
         vm.expectRevert(NonExistentSound.selector);
         sounds.mintBatch {value: total}(ids, amounts);
 
-        // test mint with too many. max number of mints is 5.
-        amounts[2] = 6;
+        // test mint with too many. max number of mints is 20.
+        amounts[2] = 21;
         ids[2] = 3;
+
+        total = 0;
+        for(uint i=0; i<ids.length; i++) {
+            total += (sounds.getSoundData(ids[i]).price * amounts[i]);
+        }
         vm.expectRevert(TooManyMints.selector);
         sounds.mintBatch {value: total}(ids, amounts);
 
@@ -229,6 +238,20 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(address(keyboardOZ).balance, 0);
         assertEq(address(this).balance, total);
 
+
+
+    }
+    function testWithdrawERC20() public {
+        assertEq(erc20Mock.balanceOf(address(this)), 1000 ether);
+        erc20Mock.transfer(address(keyboardOZ), 500 ether);
+
+        assertEq(erc20Mock.balanceOf(address(this)), 500 ether);
+        assertEq(erc20Mock.balanceOf(address(keyboardOZ)), 500 ether);
+
+        keyboardOZ.withdrawERC20(address(erc20Mock));
+
+        assertEq(erc20Mock.balanceOf(address(this)), 1000 ether);
+        assertEq(erc20Mock.balanceOf(address(keyboardOZ)), 0);
 
 
     }

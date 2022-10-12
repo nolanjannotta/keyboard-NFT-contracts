@@ -7,8 +7,7 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Base64.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 
-
-
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 
@@ -28,7 +27,6 @@ contract Sounds is ERC1155Supply, Ownable {
         uint price;
     }
     uint internal currentSoundId;
-    // uint defaultPrice = 1 ether; //matic
     string public frontEnd;
     
     string internal svgStart = '<svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"> <rect fill="#a8dadc" x="0" y="0" width="400" height="200"/> <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-size="40px" font-family="Helvetica">';
@@ -47,7 +45,7 @@ contract Sounds is ERC1155Supply, Ownable {
     
  
     constructor() ERC1155("") {
-        setFrontend("front end goes here.");
+        setFrontEnd("front end goes here.");
         // setDefaultPrice(.1 ether);
         createSound(
             "pvB8EG3mjVWf0cdarTtJOv37s-24L_9oREPCatbCEzU", 
@@ -96,13 +94,19 @@ contract Sounds is ERC1155Supply, Ownable {
         Address.sendValue(payable(owner()), amount);
     }
 
+    function withdrawERC20(address token) public {
+        require(IERC20(token).transfer(owner(), IERC20(token).balanceOf(address(this))));
+
+    }
+
     function setPrice(uint id, uint newPrice) public onlyOwner {
         soundIdToSound[id].price = newPrice;
     }
 
-    function setFrontend(string memory newUrl) public onlyOwner {
+    function setFrontEnd(string memory newUrl) public onlyOwner {
         frontEnd = newUrl;
     }
+
 
 
     function totalSounds() public view returns(uint) {
@@ -164,8 +168,8 @@ contract Sounds is ERC1155Supply, Ownable {
             sound.soundType,
             '"}, {"trait_type": "one_shot", "value": "',
             sound.oneShot ? 'true' : 'false',
-            '"}, {"trait_type": "polyphonic", "value": "',
-            sound.polyphonic ? 'true' : 'false',
+            '"}, {"trait_type": "voices", "value": "',
+            sound.polyphonic ? 'Polyphonic' : 'Monophonic',
             '"}, {"trait_type": "octaves", "value": "',
             Strings.toString(sound.octaves),
             '"}]}'
@@ -191,7 +195,7 @@ contract Sounds is ERC1155Supply, Ownable {
             uint amount = amounts[i];
             if(soundId < 1 || soundId > totalSounds()) revert NonExistentSound();
             if(totalSupply(soundId) + amount > soundIdToSound[soundId].maxAmount) revert MaxAmountExceeded(soundId);
-            if(amount > 5) revert TooManyMints();
+            if(amount > 20) revert TooManyMints();
             totalCost += (amount * soundIdToSound[soundId].price);
         }
         if(msg.value != totalCost) revert IncorrectMsgValue();

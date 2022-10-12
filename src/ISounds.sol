@@ -16,6 +16,7 @@ interface ISounds {
 
     function name() external view returns (string memory);
     function url(uint soundId) external view returns (string memory);
+    function exists(uint id) external view returns (bool);
     function safeTransferFrom(
         address from,
         address to,
@@ -25,14 +26,9 @@ interface ISounds {
     ) external;
     function balanceOf(address account, uint id) external view returns (uint);
     function mint(address to, uint id) external payable;
-    function displayImage() external view returns(string memory);
     function totalSounds() external view returns(uint);
-    function mintGrandPiano(address to) external;
     function createSound(string memory _arWeaveUrl, string memory _name, uint _maxAmount) external returns (uint);
     function getSoundData(uint id) external view returns (Sound memory);
-
-    function name(uint id) external view returns (string memory);
-    function octaves(uint id) external view returns (uint);
-    function setKeyboard(address _keyboard) external;
+    function frontEnd() external view returns (string memory);
     function mintBatch(address to,uint[] memory soundIds, uint[] memory amounts) external payable;
 }

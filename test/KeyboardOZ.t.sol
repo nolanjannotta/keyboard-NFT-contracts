@@ -19,6 +19,7 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(keyboardOZ.price(), .05 ether);
         assertEq(keyboardOZ.maxSupply(), 10_000);
         assertEq(keyboardOZ.defaultGateway(), "https://arweave.net/");
+        // assertEq(keyboardOZ.frontEnd(), "front end goes here.");
 
     }
 
@@ -61,10 +62,9 @@ contract ERC721Test is Test, TestSetUp {
         // first mint some sounds
         uint[] memory ids = new uint[](2);
         ids[0] = 1; ids[1] = 2;
-
-
         uint[] memory amounts = new uint[](2);
         amounts[0] = 2; amounts[1] = 2;
+
 
         uint total;
         for(uint i=0; i<ids.length; i++) {
@@ -72,13 +72,22 @@ contract ERC721Test is Test, TestSetUp {
         }        
         sounds.mintBatch {value: total}(ids, amounts);
         keyboardOZ.setSounds(address(sounds));
-        uint[] memory installed = keyboardOZ.getUserSoundBalances(address(this));
+        uint[] memory balances = keyboardOZ.getUserSoundBalances(address(this));
 
-        assertEq(installed[0], 2);
-        assertEq(installed[1], 2);
-        assertEq(installed[2], 0);
+        assertEq(balances[0], 2);
+        assertEq(balances[1], 2);
+        assertEq(balances[2], 0);
 
 
+    }
+
+    function testUpdateScript() public {
+        keyboardOZ.updateScript("new script");
+        assertEq(keyboardOZ.scriptEnd(), "new script]]></script></svg>");
+
+        keyboardOZ.lockScript();
+        vm.expectRevert(ScriptLocked.selector);
+        keyboardOZ.updateScript("newer script");
     }
 
     function testKeyboardOZInstallations() public {
@@ -133,7 +142,7 @@ contract ERC721Test is Test, TestSetUp {
         mintArg[0] = 1;
         mintArg[1] = 2;
         
-        // minting two keyboardOZs
+        // minting two keyboards
         keyboardOZ.mint{value: keyboardOZ.price() * 2}(mintArg);
         assertEq(keyboardOZ.ownerOf(1), address(this));
         // assertEq(keyboardOZ.ownerOf(2), address(this));
@@ -171,8 +180,14 @@ contract ERC721Test is Test, TestSetUp {
         assertEq(keyboardOZ.getInstalledSounds(1), installed);
 
         // test installing invalid sound id
-        vm.expectRevert(NotFound.selector);
+        vm.expectRevert(NonExistentSound.selector);
         keyboardOZ.install(1,5);
+
+        vm.expectRevert(NonExistentSound.selector);
+        keyboardOZ.install(1,10);
+
+        vm.expectRevert(NonExistentSound.selector);
+        keyboardOZ.install(1,0);
         
         // double install
         vm.expectRevert(AlreadyInstalled.selector);
@@ -181,7 +196,7 @@ contract ERC721Test is Test, TestSetUp {
         keyboardOZ.install(1,2);
 
         // insufficient sound token balance;
-        vm.expectRevert("ERC1155: insufficient balance for transfer");
+        vm.expectRevert(NonExistentSound.selector);
         keyboardOZ.install(1,4);
 
         // testing installing sound in non owned keyboardOZ
@@ -210,8 +225,36 @@ contract ERC721Test is Test, TestSetUp {
         vm.expectRevert(NotInstalled.selector);
         keyboardOZ.unInstall(1,2);
 
+        // test uninstalling invalid sound id
+        vm.expectRevert(NonExistentSound.selector);
+        keyboardOZ.unInstall(1,5);
+
+        vm.expectRevert(NonExistentSound.selector);
+        keyboardOZ.unInstall(1,10);
+
+        vm.expectRevert(NonExistentSound.selector);
+        keyboardOZ.unInstall(1,0);
+
+        vm.expectRevert();
+
 
         
+    }
+
+    function testWithdrawERC20() public {
+        assertEq(erc20Mock.balanceOf(address(this)), 1000 ether);
+        erc20Mock.transfer(address(keyboardOZ), 500 ether);
+
+        assertEq(erc20Mock.balanceOf(address(this)), 500 ether);
+        assertEq(erc20Mock.balanceOf(address(keyboardOZ)), 500 ether);
+
+        keyboardOZ.withdrawERC20(address(erc20Mock));
+
+        assertEq(erc20Mock.balanceOf(address(this)), 1000 ether);
+        assertEq(erc20Mock.balanceOf(address(keyboardOZ)), 0);
+
+
+
     }
  
 
@@ -274,16 +317,18 @@ contract ERC721Test is Test, TestSetUp {
 
 
         // testing too many colors
-        uint[] memory tooManyColors = new uint[](6);
-        tooManyColors[0] = 1;
-        tooManyColors[1] = 2;
-        tooManyColors[2] = 3;
-        tooManyColors[3] = 4;
-        tooManyColors[4] = 5;
-        tooManyColors[5] = 5;
+        uint[] memory tooManyColors = new uint[](21);
+        uint color;
+        for(uint i=0; i<21; i++) {
+            color += 1;
+            tooManyColors[i] = color;
+            
+            if(color == 5) {color=0;}
+        }
+        uint bigPrice = keyboardOZ.price() * tooManyColors.length;
 
         vm.expectRevert(TooManyMints.selector);
-        keyboardOZ.mint{value:.3 ether}(tooManyColors);
+        keyboardOZ.mint{value:bigPrice}(tooManyColors);
 
 
         // testing invalid color mint
@@ -322,6 +367,16 @@ contract ERC721Test is Test, TestSetUp {
         string memory testString = "this is a test string";
         uint testPrice = .2 ether;
 
+        // set sounds
+        keyboardOZ.setSounds(address(sounds));
+        assertEq(keyboardOZ.sounds(), address(sounds));
+        // test double set sounds
+        vm.expectRevert(SoundsAlreadySet.selector);
+        keyboardOZ.setSounds(address(0xBEEF));
+        // non owner
+        vm.prank(address(0xABCDBEEF));
+        vm.expectRevert('Ownable: caller is not the owner');        
+        keyboardOZ.setSounds(address(sounds));
 
         // set default sound hash
         keyboardOZ.setEPianoHash(testString);
@@ -341,15 +396,21 @@ contract ERC721Test is Test, TestSetUp {
         vm.prank(address(0xABCDBEEF));
         keyboardOZ.setPrice(testPrice);
 
+        // non owner updateScript
+        vm.expectRevert('Ownable: caller is not the owner');
+        vm.prank(address(0xABCDBEEF));
+        keyboardOZ.updateScript("new script");
 
 
         // set frontend
-        keyboardOZ.setFrontend(testString);
+        sounds.setFrontEnd(testString);
         assertEq(keyboardOZ.frontEnd(), testString);
+        assertEq(keyboardOZ.frontEnd(), sounds.frontEnd());
+
         // non owner
         vm.expectRevert('Ownable: caller is not the owner');
         vm.prank(address(0xABCDBEEF));
-        keyboardOZ.setFrontend(testString);
+        sounds.setFrontEnd(testString);
 
 
 
@@ -363,16 +424,7 @@ contract ERC721Test is Test, TestSetUp {
 
 
 
-        // set sounds
-        keyboardOZ.setSounds(address(sounds));
-        assertEq(keyboardOZ.sounds(), address(sounds));
-        // test double set sounds
-        vm.expectRevert(SoundsAlreadySet.selector);
-        keyboardOZ.setSounds(address(0xBEEF));
-        // non owner
-        vm.prank(address(0xABCDBEEF));
-        vm.expectRevert('Ownable: caller is not the owner');        
-        keyboardOZ.setSounds(address(sounds));
+
 
     }
 

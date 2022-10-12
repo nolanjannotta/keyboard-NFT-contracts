@@ -1,0 +1,547 @@
+<svg id="keyboard_svg" viewBox="0 0 650 255" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<style>
+    .very_tiny { font: bold 6px sans-serif; }
+    .tiny { font: bold 7px sans-serif; }
+    .heavy { font: bold 12px sans-serif; }
+    .medium { font: bold 10px sans-serif; }
+    .keyboard {fill: #0081a7;}
+    .buttons {fill: #83c5be; }
+    .keyBoard_text {fill: #fdfcdc}
+    .screen_text {fill: #0081a7}
+    </style>
+<defs>
+
+    <filter id="f2">
+      <feDropShadow dx="10" dy="10" stdDeviation="4"
+          flood-color="#262729" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+
+
+<rect class="keyboard" stroke="#000" x="0" y="0" width="650" height="255" rx="6" filter="url(#f2)"  />
+
+
+
+<rect fill= "#050505"  x="23" y="78" width="602" height="174" rx="6"/>
+
+<g class="buttons" stroke="#000">
+<rect x="25" y="30"  width="50" height="15" rx="2" onclick="changeOctave(-1)"/>
+<rect x="125" y="30"  width="50" height="15" rx="2" onclick="changeOctave(1)"/>
+
+<rect x="575" y="30"  width="50" height="15" rx="2" onclick="toggleSounds(1)"/>
+<rect x="475" y="30"  width="50" height="15" rx="2" onclick="toggleSounds(-1)"/>
+
+    <g  onclick="toggleAutoSustain()"> 
+
+    <rect id="autoSustainButton"  x="585" y="55"  width="30" height="15" rx="2" />
+    <rect id="autoSustainButton2" fill="#fefae0"  x="585" y="55"  width="15" height="15" rx="2" />
+    </g>
+    <g  onclick="toggleHighlight()"> 
+
+    <rect id="highlight1"  x="35" y="55"  width="30" height="15" rx="2" />
+    <rect id="highlight2" fill="#fefae0"  x="35" y="55"  width="15" height="15" rx="2" />
+
+    </g>
+
+</g>
+
+            <g fill="#fefae0" onmouseup="pauseAll()"> 
+            <rect stroke="#000"  x="225" y="7" width="200" height="60" rx="3"/>
+            <rect id="loadingRect" stroke-width=".3" x="285" y="43" width="80" height="2" rx="1"/>
+            <rect id="loadingBar" x="285" y="43" width="0" height="2" rx="1"/>
+
+
+                    <g stroke-width="2">
+
+                    <rect id="KeyA" x="25" y="80" width="38" height="170" rx="6" onmousedown="play(notes[0] + `${co +0}`)"  />
+                    <rect id="KeyS" x="65" y="80" width="38" height="170" rx="6" onmousedown="play(notes[2] + `${co +0}`)"  />
+                    <rect id="KeyD" x="105" y="80" width="38" height="170" rx="6" onmousedown="play(notes[4] + `${co +0}`)" />
+                    <rect id="KeyF" x="145" y="80" width="38" height="170" rx="6" onmousedown="play(notes[5] + `${co +0}`)" />
+                    <rect id="KeyG" x="185" y="80" width="38" height="170" rx="6" onmousedown="play(notes[7] + `${co +0}`)"/>
+                    <rect id="KeyH" x="225" y="80" width="38" height="170" rx="6" onmousedown="play(notes[9] + `${co +0}`)"/>
+                    <rect id="KeyJ" x="265" y="80" width="38" height="170" rx="6" onmousedown="play(notes[11] + `${co +0}`)"/>
+                    <rect id="KeyK" x="305" y="80" width="38" height="170" rx="6" onmousedown="play(notes[0] + `${co +1}`)"/>
+                    <rect id="KeyL" x="345" y="80" width="38" height="170" rx="6" onmousedown="play(notes[2] + `${co +1}`)"/>
+                    <rect id="Semicolon" x="385" y="80" width="38" height="170" rx="6" onmousedown="play(notes[4] + `${co +1}`)"/>
+                    <rect id="Quote" x="425" y="80" width="38" height="170" rx="6" onmousedown="play(notes[5] + `${co +1}`)"/>
+                    <rect id="Enter" x="465" y="80" width="38" height="170" rx="6" onmousedown="play(notes[7] + `${co +1}`)"/>
+                    <rect x="505" y="80" width="38" height="170" rx="6" onmousedown="play(notes[9] + `${co +1}`)"/>
+                    <rect x="545" y="80" width="38" height="170" rx="6" onmousedown="play(notes[11] + `${co +1}`)"/>
+                    <rect x="585" y="80" width="38" height="170" rx="6" onmousedown="play(notes[0] + `${co +2}`)"/>
+                    </g>
+            </g>
+
+            <g fill="#050505" onmouseup="pauseAll()" stroke-width="2"> 
+
+            <rect id="KeyW" x="48" y="79" width="24" height="95" rx="4" onmousedown="play(notes[1] + `${co +0}`)"/>
+            <rect id="KeyE" x="92" y="79" width="24" height="95" rx="4" onmousedown="play(notes[3] + `${co +0}`)"/>
+            <rect id="KeyT" x="168" y="79" width="24" height="95" rx="4" onmousedown="play(notes[6] + `${co +0}`)"/>
+            <rect id="KeyY" x="211" y="79" width="24" height="95" rx="4" onmousedown="play(notes[8] + `${co +0}`)"/>
+            <rect id="KeyU" x="254" y="79" width="24" height="95" rx="4" onmousedown="play(notes[10] + `${co +0}`)"/>
+            <rect id="KeyO" x="328" y="79" width="24" height="95" rx="4" onmousedown="play(notes[1] + `${co +1}`)"/>
+            <rect id="KeyP" x="372" y="79" width="24" height="95" rx="4" onmousedown="play(notes[3] + `${co +1}`)"/>
+            <rect id="BracketRight" x="448" y="79" width="24" height="95" rx="4" onmousedown="play(notes[6] + `${co +1}`)"/>
+            <rect x="491" y="79" width="24" height="95" rx="4" onmousedown="play(notes[8] + `${co +1}`)"/>
+            <rect x="534" y="79" width="24" height="95" rx="4" onmousedown="play(notes[10] + `${co +1}`)"/>
+
+            </g>
+
+
+    
+
+
+    <g text-anchor="middle" class="screen_text">
+    <text x="325" y="18" class="tiny">1324/10000</text>
+    <text x="325" y="60" class="very_tiny" >Owner: 0x5b38da6a701c568545dcfcb03fcb875f56beddc4</text> 
+    <text x="245" y="30" class="tiny">sustain</text> 
+    <text id="sustain" x="245" y="40" class="medium" onclick="toggleAutoSustain()">off</text> 
+    
+    <text x="405" y="30" class="tiny">octave</text> 
+    <text id="currOctave" x="405" y="40" class="medium" >1-2</text> 
+    <text id="selectedSound" x="325" y="35" class="heavy">1. Electric Piano</text> 
+    </g> 
+    <g dominant-baseline="middle" text-anchor="middle" fill="#fefae0"> 
+    <text x="100" y="38" class="medium">octave</text> 
+    <text x="550" y="38" class="medium">sounds</text> 
+    <text x="550" y="63" class="medium">sustain</text> 
+    <text x="100" y="63" class="medium">highlight</text><text id="hltext" x="57" y="63" class="very_tiny">off</text> 
+
+    <text x="500" y="37" class="heavy" onclick="toggleSounds(-1)">-</text> 
+    <text x="600" y="38.5" class="heavy" onclick="toggleSounds(1)">+</text> 
+    <text x="50" y="37" class="heavy" onclick="changeOctave(-1)">-</text> 
+    <text x="150" y="38.5" class="heavy" onclick="changeOctave(1)">+</text> 
+    </g>
+
+
+<g id="allSounds"></g>
+
+
+ 
+
+
+
+
+
+
+<script type="text/javascript"> <![CDATA[
+
+
+    //let names = ["Electric Piano","Square Lead","Steel Drum","Juno","808 Pack","Rhodes","Moogish","Synth Trumpet","Classic Synth","Synth Bass","Upright Bass", "mp3Test"];
+    //let soundUris = ["https://arweave.net/tN6qM5U8UE9n_gSMQ0LJYJ4sgrVYe6OEKDcvgVYvXU4","https://arweave.net/yApPUXbn1TVuBkhh-dErFCOV_tZ65GT9mRSmy-a0d-s","https://arweave.net/c-Zk4s6ShLcYrrZhzZU65BomlwxNHhqz7j07xLT1Rbo","https://arweave.net/TE7aN0nFYhe5-ewi6KACk-GLMHQWGsJEis1h35wPmpM","https://arweave.net/0xjpnNPOfSwFwrBy1t2AhVuM1qX4UEfuB9RSvw5S1Ng","https://arweave.net/kBUhywE1HHxFShwqZcwV5S_jWeRnagcdAw6L-qlirN4","https://arweave.net/rWGHncRyJbUyL_pzx9ZNGtDYtu2e4x8bzIEoQZd9yV0","https://arweave.net/vR4Xs2JY6mbUQqJESPlMK9ql5MzB1PVZjGXyzcm3hS4","https://arweave.net/FzGq3qnau8PTI4cJRGTYxZfEITomQGI2mf-i1Y792Xo","https://arweave.net/WfzGsrkYa6qhtxtIKCOyqD_E-vchH1mEuzSQRRtnUaU","https://arweave.net/u9L4MWsTx8q15qc5IdNisbhVi7YgWYsOoHrJ6TjduWk","https://arweave.net/Tckjl-5nNVZExOmu9vW6ONV7AH-vkVkuqtXDN2KUbS4"];
+    //let octaves = [4,5,5,4,10,4,5,5,5,5,5,4];
+    //let oneShots = [false,false,false,false,true,false,false,false,false,false,false,false];
+    //let polyphonic = [true,false,true,true,false,true,true,true,true,true,true, true];
+
+    let names = ["Synth Violin"];
+    let soundUris = ["https://arweave.net/2r9EyAogQBg-ct_KvVOJjB8hx9G5Q2VDDVaHAx0oXsg"];
+    let octaves = [5];
+    let oneShots = [false];
+    let polyphonic = [true];
+
+
+    document.documentElement.addEventListener("keydown",(evt) => handleKeyPress(evt.code));
+    document.documentElement.addEventListener("keyup",(evt) => handleKeyUp(evt.code));
+
+
+    let notes = ["c","cSharp","d","dSharp","e","f","fSharp","g","gSharp","a","aSharp","b"]
+    let ip = {}
+    let cn = {}
+    let co = 1;
+    let sus = false;
+    let aSus = false;
+    let csi = 0;
+    let hl = false;
+    
+    let svg = document.getElementById("keyboard_svg");
+    let soundsGroup = document.getElementById("allSounds");
+    
+
+    function toggleAutoSustain() {
+        aSus = !aSus
+          
+        let text,x
+
+        aSus ? (text = "on",x = "600") : (text = "off",x = "585")
+        document.getElementById("sustain").textContent = text
+        document.getElementById("autoSustainButton2").setAttribute("x",x)
+        
+    }
+    function toggleHighlight() {
+        hl = !hl
+          
+        let text,x,textx
+        hl ? (x = "50", textx = "43", text = "on") : (x = "35",textx = "57",text="off")
+
+        let hltext = document.getElementById("hltext")
+        hltext.textContent = text
+        hltext.setAttribute("x", textx)
+
+        document.getElementById("highlight2").setAttribute("x",x)
+        
+    }
+
+
+
+
+    function toggleSounds(direction) {
+        if(0 == csi && direction < 0 || csi == names.length -1 && direction > 0) {return}
+        csi += direction
+        co = 1
+        document.getElementById("currOctave").textContent = "1-2"    
+        document.getElementById("selectedSound").textContent = `${csi + 1}. ${names[csi]}`;
+        let sounds = soundsGroup.children
+        let soundNames = Object.values(sounds).map(val => val.id)
+        if(!soundNames.includes(names[csi])) {
+            loadSounds(csi)
+        }
+        
+    } 
+    
+
+    function loadSounds(index) {
+        let xhtml = "http://www.w3.org/1999/xhtml";
+            
+            let octave = 1
+            let noteIndex = 0
+            
+            let newGroup = document.createElementNS(xhtml, "g");
+            newGroup.setAttribute("id", names[index])
+            soundsGroup.appendChild(newGroup)
+            let loadingBar = document.getElementById("loadingBar")
+            let loadingRect = document.getElementById("loadingRect")
+            
+            loadingRect.setAttribute("stroke", "#000")
+            loadingBar.setAttribute("class", "keyboard")
+            loadingBar.setAttribute("width", "0")
+
+            let numNotes = (octaves[index] * 12) + 1;
+            let loaded = 0
+            for(let i=0; i<numNotes; i++) {
+                
+                let newAudio = new Audio()
+                newAudio.crossOrigin = "anonymous";
+                newAudio.src = soundUris[index] + "/" + notes[noteIndex] + `${octave}` + ".flac"
+                newAudio.oncanplaythrough = () => {                    
+                    loaded ++
+                    loadingBar.setAttribute("width", loaded/numNotes * 80)
+                    if(loaded == numNotes) {
+                        loaded=0
+                        loadingRect.removeAttribute("stroke")
+                        loadingBar.removeAttribute("class")
+                    }
+                }
+                newAudio.setAttribute("type", "audio/flac")
+                newAudio.setAttribute("preload", "auto")
+                newAudio.setAttribute("id", notes[noteIndex] + `${octave}`)
+                newGroup.appendChild(newAudio)
+                
+                if(noteIndex == 11) {
+                    noteIndex = 0
+                    octave += 1
+                }
+                else{
+                    noteIndex += 1
+                }                
+            }
+            svg.appendChild(soundsGroup)
+    }
+    loadSounds(0)
+
+
+
+    function play(note) {
+        if(cn[note] == true) {return}
+        if(oneShots[csi] || !polyphonic[csi]) {pauseAll()}
+        cn[note] = true;
+        let group = document.getElementById(names[csi])
+        let audio = group.querySelector("#" + note)
+        audio.currentTime=0; 
+        audio.play() 
+        
+    }
+
+
+    function pauseUp(note) {
+        
+        cn[note] = false
+        if(oneShots[csi]) {return}
+        pause(note)
+        
+
+
+    }
+
+    function pause(note) {
+        if(sus || aSus) {return}
+        let group = document.getElementById(names[csi])
+        let audio = group.querySelector("#" + note)
+        audio.pause();
+    }
+
+    function pauseAll() {
+        Object.keys(cn).forEach((key) => {
+            cn[key] = false;
+            pause(key) 
+        })
+    }
+
+
+    function pausePlaying() {
+        Object.keys(cn).forEach((key) => {
+            if(cn[key]==false) {
+                pause(key) 
+ 
+            }
+            
+        })
+        
+        
+
+    }
+
+
+
+
+    function changeOctave(value) {
+        let max = octaves[csi]
+        co = co + value
+        if(co < 1){co =1}
+        if(co > max){co =max}
+        let oct = `${co}-${co+1}`;
+        if(co == max){oct = max}
+        document.getElementById("currOctave").textContent = oct
+    }
+
+
+    function ku(code, index) {
+        hl && document.getElementById(code).removeAttribute("stroke")
+        let note = ip[index]
+        pauseUp(note) 
+
+    }
+    function kd(code,index,noteIndex,oct) {
+        hl && document.getElementById(code).setAttribute("stroke","#ff0a54")
+        let note = notes[noteIndex] + `${co + oct}`
+        ip[index] = note
+        play(note)
+    }
+
+    function handleKeyUp(code) {
+        switch (code){
+
+            case "KeyA":
+            ku(code,0)
+            break;
+
+            case "KeyW":
+            ku(code,1)            
+            break;
+
+            case "KeyS":
+            ku(code,2)            
+            break;
+
+            case "KeyE":
+            ku(code,3)            
+            break;
+
+            case "KeyD":
+            ku(code,4)
+            break;
+
+
+            case "KeyF":
+            ku(code,5)
+            break;
+
+            case "KeyT":
+            ku(code,6)
+            break;
+
+            case "KeyG":
+            ku(code,7)           
+            break;
+
+            case "KeyY":
+            ku(code,8)
+            break;
+
+            case "KeyH":
+            ku(code,9)           
+            break; 
+
+            case "KeyU":
+            ku(code,10)            
+            break;
+
+            case "KeyJ":
+            ku(code,11)            
+            break;
+
+            case "KeyK":
+            ku(code,12)
+            break;
+
+            case "KeyO":
+            ku(code,13)            
+            break;
+
+            case "KeyL":
+            ku(code,14)            
+            break;
+
+            case "KeyP":
+            ku(code,15)            
+            break;
+
+            case "Semicolon":
+            ku(code,16)                   
+            break;
+
+            case "Quote":
+            ku(code,17)           
+            break;
+
+            case "BracketRight":
+            ku(code,18)            
+            break;
+
+            case "Enter":
+            ku(code,19)                   
+            break;
+
+
+            case "Space":
+            sus = false;
+            pausePlaying();
+            
+            !aSus && (document.getElementById("sustain").textContent = "off");
+            break;
+
+                
+
+        }
+
+    }
+    
+
+    function handleKeyPress(code) {
+        switch (code){
+
+            case "Digit1":            
+            changeOctave(-1);
+            break;
+
+            case "Digit2":
+            changeOctave(1);
+            break;
+
+            case "Digit9":
+            toggleSounds(-1);
+            break;
+
+            case "Digit0":
+            toggleSounds(1);
+            break;
+
+
+            case "KeyA":
+            kd(code, 0,0,0)
+            break;
+
+            case "KeyW":
+            kd(code, 1,1,0)
+            break;
+            
+            case "KeyS":
+            kd(code, 2,2,0)
+            break;
+
+            case "KeyE":
+            kd(code, 3,3,0)
+            break;
+
+            case "KeyD":
+            kd(code, 4,4,0)
+            break;
+
+            case "KeyF":
+            kd(code, 5,5,0)
+            break;
+
+            case "KeyT":
+            kd(code, 6,6,0)
+            break;
+
+            case "KeyG":
+            kd(code, 7,7,0)
+            break;
+
+            case "KeyY":
+            kd(code, 8,8,0)
+            break;
+
+            case "KeyH":
+            kd(code, 9,9,0)
+            break;
+            
+            case "KeyU":
+            kd(code, 10,10,0)
+            break;
+
+            case "KeyJ":
+            kd(code, 11,11,0)
+            break;
+
+            case "KeyK":
+            kd(code, 12,0,1)
+            break;
+
+            case "KeyO":
+            kd(code, 13,1,1)
+            break;
+
+            case "KeyL":
+            kd(code, 14,2,1)
+            break;
+
+            case "KeyP":
+            kd(code, 15,3,1)
+            break;
+
+            case "Semicolon":
+            kd(code, 16,4,1)
+            break;
+
+            case "Quote":
+            kd(code, 17,5,1)
+            break;
+
+            case "BracketRight":
+            kd(code, 18,6,1)
+            break;
+
+            case "Enter":
+            kd(code, 19,7,1)
+            break;
+
+            case "Space":
+            sus = true;            
+            !aSus && (document.getElementById("sustain").textContent = "on");
+            break;
+
+                
+
+        }
+
+
+    }
+
+
+
+
+  ]]></script>
+
+
+</svg>
